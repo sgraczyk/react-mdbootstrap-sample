@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "superagent": "registry:dt/superagent#2.0.0+20161124104740"
+  }
+}
