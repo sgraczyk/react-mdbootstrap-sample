@@ -7,7 +7,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps): JSX.Element => (
-  <div className="app-layout">
+  <div className="container">
     <Header title="Exchange Rates" />
     {children}
   </div>

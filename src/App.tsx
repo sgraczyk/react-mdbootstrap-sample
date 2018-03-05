@@ -24,7 +24,7 @@ class App extends React.Component {
         <Router>
           <Layout>
             <Switch>
-              <Route path="/exchange-rates" component={ExchangeRates} />
+              <Route path="/" component={ExchangeRates} />
             </Switch>
           </Layout>
         </Router>
