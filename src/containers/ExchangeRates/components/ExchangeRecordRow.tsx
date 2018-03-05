@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { observer } from 'mobx-react';
-import ExchangeRate from '../../../models/exchange-rate.model';
+import { Badge } from 'mdbreact';
+import { ExchangeRateView } from '../../../stores/exchange-rates.store';
 
 interface ExchangeRateRowProps {
-  exchangeRate: ExchangeRate;
+  exchangeRate: ExchangeRateView;
 }
 
 @observer
@@ -13,19 +14,19 @@ export default class ExchangeRateRow extends React.Component<ExchangeRateRowProp
     const { exchangeRate } = this.props;
 
     return (
-      <div className="exchange-rate-row">
-        <div className="exchange-rate">
-          <div className="exchange-rate-id">
-            {exchangeRate.Id}
-          </div>
-          <div className="currency-pair">
-            {exchangeRate.CurrencyPair}
-            <span className="date">
-              {new Date(exchangeRate.Date).toDateString()}
-            </span>
-          </div>
-        </div>
-      </div>
+      <tr className="exchange-rate-row">
+        <td className="date">
+          {exchangeRate.date.toDateString()}
+        </td>
+        <td className="currency-pair">
+          <Badge color="blue">
+            <i className={`fa fa-${exchangeRate.targetCurrencyIconName}`} /> {exchangeRate.targetCurrency}
+          </Badge>
+        </td>
+        <td className="exchange-rate">
+          {exchangeRate.rate}
+        </td>
+      </tr>
     );
   }
 }

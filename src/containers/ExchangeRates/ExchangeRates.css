@@ -1,0 +1,11 @@
+.exchange-rates thead th {
+  font-weight: bold;
+}
+
+.exchange-rates tbody td {
+  font-size: 16px;
+}
+
+.exchange-rates tbody .currency-pair {
+  color: var(--white);
+}

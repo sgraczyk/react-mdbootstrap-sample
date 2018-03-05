@@ -5,21 +5,17 @@ interface HeaderProps {
   title: string;
 }
 
-class Header extends React.Component<HeaderProps> {
-  render() {
-    return (
-      <Navbar color="indigo" dark={true} expand="lg">
-        <NavbarBrand href="/">
-          <strong>{this.props.title}</strong>
-        </NavbarBrand>
-        <NavbarNav>
-          <NavItem active={true}>
-            <NavLink className="nav-link" to="/">Current</NavLink>
-          </NavItem>
-        </NavbarNav>
-      </Navbar>
-    );
-  }
-}
+const Header = ({ title }: HeaderProps): JSX.Element => (
+  <Navbar color="indigo" dark={true} expand="lg">
+    <NavbarBrand href="/">
+      <strong>{title}</strong>
+    </NavbarBrand>
+    <NavbarNav>
+      <NavItem active={true}>
+        <NavLink className="nav-link" to="/">Current</NavLink>
+      </NavItem>
+    </NavbarNav>
+  </Navbar>
+);
 
 export default Header;
