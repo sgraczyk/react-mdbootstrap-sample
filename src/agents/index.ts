@@ -1,7 +1,7 @@
 import * as _superagent from 'superagent';
 import * as superagentPromise from 'superagent-promise';
 
-const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+const corsProxy = 'https://crossorigin.me/';
 
 const CONTENT_TYPE_HEADER = 'Content-Type';
 const ACCEPT_HEADER = 'Accept';

@@ -1,14 +1,19 @@
 import * as React from 'react';
+import ExchangeRateHeader from './ExchangeRateHeader';
+import ExchangeRateRow from './ExchangeRateRow';
 import { LoadingSpinner } from '../../../components/layout';
 import { ExchangeRateView } from '../../../stores/exchange-rates.store';
-import ExchangeRecordRow from './ExchangeRecordRow';
+import ExchangeRateSortField from '../../../constants/exchange-rate-sort-field';
 
 interface ExchangeRateListProps {
   exchangeRates: ExchangeRateView[];
   isLoading: boolean;
+  isSortAscending: boolean;
+  sortField: ExchangeRateSortField;
+  onSort: (sortField: ExchangeRateSortField) => void;
 }
 
-const ExchangeRateList = ({ exchangeRates, isLoading }: ExchangeRateListProps) => {
+const ExchangeRateList = ({ exchangeRates, isLoading, isSortAscending, sortField, onSort }: ExchangeRateListProps) => {
   if (isLoading && exchangeRates.length === 0) {
     return (
       <LoadingSpinner />
@@ -26,20 +31,23 @@ const ExchangeRateList = ({ exchangeRates, isLoading }: ExchangeRateListProps) =
   return (
     <table className="table">
       <thead>
-        <tr>
-          <th>Date</th>
-          <th>Currency Pair</th>
-          <th>Rate</th>
-        </tr>
+        <ExchangeRateHeader
+          sortField={sortField}
+          onSort={onSort}
+          isSortAscending={isSortAscending}
+        />
       </thead>
       <tbody>
-      {
-        exchangeRates.map((exchangeRate: ExchangeRateView) => {
-          return (
-            <ExchangeRecordRow exchangeRate={exchangeRate} key={exchangeRate.id} />
-          );
-        })
-      }
+        {
+          exchangeRates.map((exchangeRate: ExchangeRateView) => {
+            return (
+              <ExchangeRateRow
+                exchangeRate={exchangeRate}
+                key={exchangeRate.id}
+              />
+            );
+          })
+        }
       </tbody>
     </table>
   );

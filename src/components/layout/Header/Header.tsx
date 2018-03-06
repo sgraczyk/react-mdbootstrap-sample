@@ -11,7 +11,7 @@ const Header = ({ title }: HeaderProps): JSX.Element => (
       <strong>{title}</strong>
     </NavbarBrand>
     <NavbarNav>
-      <NavItem active={true}>
+      <NavItem>
         <NavLink className="nav-link" to="/">Current</NavLink>
       </NavItem>
     </NavbarNav>

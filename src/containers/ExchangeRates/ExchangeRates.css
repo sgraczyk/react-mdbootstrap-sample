@@ -1,5 +1,6 @@
 .exchange-rates thead th {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .exchange-rates tbody td {

@@ -17,13 +17,16 @@ export default class Home extends React.Component<HomeProps> {
   }
 
   render() {
-    const { exchangeRates, isLoading } = this.props.exchangeRatesStore;
+    const { exchangeRates, isLoading, setSorting, isSortAscending, sortField } = this.props.exchangeRatesStore;
     return (
       <div className="exchange-rates row">
         <div className="col-sm-12 col-md-8">
           <ExchangeRateList
             exchangeRates={exchangeRates}
             isLoading={isLoading}
+            isSortAscending={isSortAscending}
+            sortField={sortField}
+            onSort={setSorting.bind(this.props.exchangeRatesStore)}
           />
         </div>
         <div className="col-sm-12 col-md-4">
