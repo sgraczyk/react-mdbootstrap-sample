@@ -7,6 +7,23 @@
   font-size: 16px;
 }
 
+.exchange-rates tbody td .edit-button {
+  height: 23px;
+  width: 23px;
+}
+
+.exchange-rates tbody td .edit-button i {
+  line-height: 23px;
+  font-size: 14px;
+}
+
 .exchange-rates tbody .currency-pair {
   color: var(--white);
+}
+
+.exchange-rate-edit-modal .date-label {
+  position: absolute;
+  top: -0.6rem;
+  left: 0;
+  font-size: .8rem;
 }

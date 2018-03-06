@@ -23,6 +23,9 @@ const ExchangeRateHeader = ({ sortField, isSortAscending, onSort }: ExchangeRate
         Rate {sortField === ExchangeRateSortField.Rate
           && <SortIcon isAscending={isSortAscending} />}
       </th>
+      <th>
+        Actions
+      </th>
     </tr>
   );
 };

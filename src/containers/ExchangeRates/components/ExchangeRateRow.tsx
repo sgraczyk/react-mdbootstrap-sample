@@ -1,24 +1,36 @@
 import * as React from 'react';
-import { Badge } from 'mdbreact';
+import { Badge, Button, Fa } from 'mdbreact';
 import { ExchangeRateView } from '../../../stores/exchange-rates.store';
 
 interface ExchangeRateRowProps {
   exchangeRate: ExchangeRateView;
+  onEdit: (exchangeRate: ExchangeRateView) => void;
 }
 
-const ExchangeRateRow = ({ exchangeRate }: ExchangeRateRowProps) => {
+const ExchangeRateRow = ({ exchangeRate, onEdit }: ExchangeRateRowProps) => {
   return (
     <tr className="exchange-rate-row">
       <td className="date">
-        {exchangeRate.date.toDateString()}
+        {exchangeRate.date.format('DD/MM/YYYY')}
       </td>
       <td className="currency-pair">
         <Badge color="blue">
-          <i className={`fa fa-${exchangeRate.targetCurrencyIconName}`} /> {exchangeRate.targetCurrency}
+          <Fa icon={exchangeRate.targetCurrencyIconName} /> {exchangeRate.targetCurrency}
         </Badge>
       </td>
       <td className="exchange-rate">
         {exchangeRate.rate}
+      </td>
+      <td>
+        <Button
+          className="edit-button"
+          tag="a"
+          floating={true}
+          gradient="blue"
+          onClick={() => onEdit(exchangeRate)}
+        >
+          <Fa icon="edit" />
+        </Button>
       </td>
     </tr>
   );

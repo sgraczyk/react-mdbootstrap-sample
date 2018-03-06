@@ -11,9 +11,13 @@ interface ExchangeRateListProps {
   isSortAscending: boolean;
   sortField: ExchangeRateSortField;
   onSort: (sortField: ExchangeRateSortField) => void;
+  onEdit: (exchangeRate: ExchangeRateView) => void;
 }
 
-const ExchangeRateList = ({ exchangeRates, isLoading, isSortAscending, sortField, onSort }: ExchangeRateListProps) => {
+const ExchangeRateList = ({
+  exchangeRates, isLoading, isSortAscending, sortField,
+  onSort, onEdit
+}: ExchangeRateListProps) => {
   if (isLoading && exchangeRates.length === 0) {
     return (
       <LoadingSpinner />
@@ -44,6 +48,7 @@ const ExchangeRateList = ({ exchangeRates, isLoading, isSortAscending, sortField
               <ExchangeRateRow
                 exchangeRate={exchangeRate}
                 key={exchangeRate.id}
+                onEdit={onEdit}
               />
             );
           })

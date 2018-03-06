@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { Fa } from 'mdbreact';
 
 interface SortIconProps {
   isAscending: boolean;
 }
 
 const SortIcon = ({ isAscending }: SortIconProps) => {
-  const className = isAscending
-    ? 'fa fa-angle-double-up'
-    : 'fa fa-angle-double-down';
+  const icon = isAscending
+    ? 'angle-double-up'
+    : 'angle-double-down';
   return (
-    <i className={className} />
+    <Fa icon={icon} />
   );
 };
 

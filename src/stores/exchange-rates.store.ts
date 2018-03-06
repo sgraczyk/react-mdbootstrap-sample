@@ -1,4 +1,5 @@
 import { observable, action, computed, runInAction } from 'mobx';
+import * as moment from 'moment';
 import ExchangeRateAgent from '../agents/exchange-rate.agent';
 import ExchangeRate from '../models/exchange-rate.model';
 import ExchangeRateSortField from '../constants/exchange-rate-sort-field';
@@ -7,11 +8,17 @@ export class ExchangeRateView {
   @observable id: string;
   @observable currencyPair: string;
   @observable rate: number;
-  @observable date: Date;
+  @observable date: moment.Moment;
 
   @computed
   get targetCurrency() {
-    return this.currencyPair.substr(3, 3);
+    if (this.currencyPair && this.currencyPair.length === 6) {
+      return this.currencyPair.substr(3, 3);
+    }
+    return '';
+  }
+  set targetCurrency(value: string) {
+    this.currencyPair = `EUR${value}`;
   }
 
   @computed
@@ -31,7 +38,7 @@ export class ExchangeRateView {
     this.id = data.Id;
     this.currencyPair = data.CurrencyPair;
     this.rate = data.Rate;
-    this.date = new Date(data.Date);
+    this.date = moment(data.Date);
   }
 }
 
@@ -93,7 +100,7 @@ export default class ExchangeRatesStore {
         return firstElement.rate - secondElement.rate;
       case ExchangeRateSortField.Date:
       default:
-        return firstElement.date.getTime() - secondElement.date.getTime();
+        return firstElement.date.diff(secondElement.date);
     }
   }
 }
