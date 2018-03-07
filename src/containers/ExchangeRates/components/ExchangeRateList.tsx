@@ -2,7 +2,7 @@ import * as React from 'react';
 import ExchangeRateHeader from './ExchangeRateHeader';
 import ExchangeRateRow from './ExchangeRateRow';
 import { LoadingSpinner } from '../../../components/layout';
-import { ExchangeRateView } from '../../../stores/exchange-rates.store';
+import ExchangeRateView from '../../../models/view-models/exchange-rate.view';
 import ExchangeRateSortField from '../../../constants/exchange-rate-sort-field';
 
 interface ExchangeRateListProps {

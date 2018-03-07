@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
-import ExchangeRatesStore, { ExchangeRateView } from '../../stores/exchange-rates.store';
+import { observable, action } from 'mobx';
+import * as moment from 'moment';
+import ExchangeRatesStore from '../../stores/exchange-rates.store';
+import ExchangeRateView from '../../models/view-models/exchange-rate.view';
 import ExchangeRateList from './components/ExchangeRateList';
 import EditModal from './components/EditModal';
 import './ExchangeRates.css';
@@ -9,18 +12,17 @@ interface HomeProps {
   exchangeRatesStore: ExchangeRatesStore;
 }
 
-interface HomeState {
-  editedExchangeRate?: ExchangeRateView;
-  isModalOpen: boolean;
+export interface ExchangeRateEdit {
+ date: moment.Moment;
+ rate: number;
+ targetCurrency: string;
 }
 
 @inject('exchangeRatesStore')
 @observer
-export default class Home extends React.Component<HomeProps, HomeState> {
-  state = {
-    isModalOpen: false,
-    editedExchangeRate: undefined
-  };
+export default class Home extends React.Component<HomeProps> {
+  @observable private isModalOpen = false;
+  @observable private editedExchangeRate?: ExchangeRateView = undefined;
 
   constructor(props: HomeProps) {
     super(props);
@@ -34,7 +36,6 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
   render() {
     const { exchangeRates, isLoading, setSorting, isSortAscending, sortField } = this.props.exchangeRatesStore;
-    const { isModalOpen, editedExchangeRate } = this.state;
     return (
       <div className="exchange-rates">
         <ExchangeRateList
@@ -46,25 +47,29 @@ export default class Home extends React.Component<HomeProps, HomeState> {
           onEdit={this.openEditModal}
         />
         <EditModal
-          exchangeRate={editedExchangeRate!}
-          isOpen={isModalOpen}
+          exchangeRate={this.editedExchangeRate!}
+          isOpen={this.isModalOpen}
           onClose={this.closeEditModal}
+          onSubmit={this.updateExchangeRate}
         />
       </div>
     );
   }
 
+  @action
   closeEditModal() {
-    this.setState(() => ({
-      isModalOpen: false,
-      editedExchangeRate: undefined
-    }));
+    this.isModalOpen = false;
+    this.editedExchangeRate = undefined;
   }
 
+  @action
   openEditModal(exchangeRate: ExchangeRateView) {
-    this.setState(() => ({
-      isModalOpen: true,
-      editedExchangeRate: exchangeRate
-    }));
+    this.isModalOpen = true;
+    this.editedExchangeRate = exchangeRate;
+  }
+
+  @action
+  updateExchangeRate(edited: ExchangeRateEdit) {
+    alert(JSON.stringify(edited));
   }
 }

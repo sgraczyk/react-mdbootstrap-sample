@@ -21,9 +21,17 @@
   color: var(--white);
 }
 
-.exchange-rate-edit-modal .date-label {
+.exchange-rate-edit-modal .form-label {
   position: absolute;
   top: -0.6rem;
   left: 0;
   font-size: .8rem;
+}
+
+.exchange-rate-edit-modal .validation-error {
+  color: red;
+}
+
+.exchange-rate-edit-modal .md-form .target-currency {
+  border: none;
 }

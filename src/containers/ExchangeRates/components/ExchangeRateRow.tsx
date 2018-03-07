@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Badge, Button, Fa } from 'mdbreact';
-import { ExchangeRateView } from '../../../stores/exchange-rates.store';
+import ExchangeRateView from '../../../models/view-models/exchange-rate.view';
 
 interface ExchangeRateRowProps {
   exchangeRate: ExchangeRateView;
