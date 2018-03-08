@@ -1,16 +1,14 @@
 import * as React from 'react';
 import {
-  Button, Modal, ModalBody, ModalHeader, ModalFooter,
-  Dropdown, DropdownToggle, DropdownMenu, DropdownItem
+  Button, Modal, ModalBody, ModalHeader, ModalFooter
 } from 'mdbreact';
-import DatePicker from 'react-datepicker';
 import { observable, action, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
 import MobxReactForm from 'mobx-react-form';
 import * as validatorjs from 'validatorjs';
 import * as moment from 'moment';
 import { ExchangeRateEdit } from '../../../models/exchange-rate.model';
-import 'react-datepicker/dist/react-datepicker.css';
+import { DateField, DropdownList, TextField } from '../../../components/form';
 
 interface EditModalProps {
   exchangeRate?: ExchangeRateEdit;
@@ -22,13 +20,6 @@ interface EditModalProps {
 @observer
 class EditModal extends React.Component<EditModalProps> {
   @observable private validatedForm: any;
-  @observable private isDropdownOpen: boolean;
-
-  constructor(props: EditModalProps) {
-    super(props);
-
-    this.toggleDropDown = this.toggleDropDown.bind(this);
-  }
 
   componentWillReceiveProps(props: EditModalProps) {
     if (props.exchangeRate) {
@@ -59,57 +50,42 @@ class EditModal extends React.Component<EditModalProps> {
               <div className="edit-form">
                 <div className="row">
                   <div className="col-6">
-                    <div className="md-form">
-                      <DatePicker
-                        className="form-control"
-                        name={date.name}
-                        selected={date.value}
-                        onChange={(value) => this.handleDateChange(value!, date.onChange)}
-                      />
-                      <label className="form-label" htmlFor="date">Date*</label>
-                      {!date.isValid &&
-                        <span className="validation-error">{date.error}</span>}
-                    </div>
+                    <DateField
+                      name={date.name}
+                      value={date.value}
+                      label="Date*"
+                      htmlFor="date"
+                      isValid={date.isValid}
+                      error={date.error}
+                      onChange={(value) => this.handleDateChange(value!, date.onChange)}
+                    />
                   </div>
                   <div className="col-6">
-                    <div className="md-form">
-                      <input
-                        className="form-control"
-                        name={rate.name}
-                        type={rate.type}
-                        value={rate.value}
-                        onChange={rate.onChange}
-                      />
-                      <label className="form-label" htmlFor="date">Rate*</label>
-                      {!rate.isValid &&
-                        <span className="validation-error">{rate.error}</span>}
-                    </div>
+                    <TextField
+                      name={rate.name}
+                      type={rate.type}
+                      label="Rate*"
+                      htmlFor="rate"
+                      value={rate.value}
+                      isValid={rate.isValid}
+                      error={rate.error}
+                      onChange={rate.onChange}
+                    />
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-12">
-                    <div className="md-form">
-                      <Dropdown
-                        className="form-control target-currency"
-                        isOpen={this.isDropdownOpen}
-                        toggle={this.toggleDropDown}
-                      >
-                        <DropdownToggle caret={true} color="primary">
-                          {targetCurrency.value}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          <DropdownItem onClick={() => targetCurrency.onChange('USD')}>
-                            USD
-                          </DropdownItem>
-                          <DropdownItem onClick={() => targetCurrency.onChange('CHF')}>
-                            CHF
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </Dropdown>
-                      <label className="form-label" htmlFor="target-currency">Target Currency*</label>
-                      {!targetCurrency.isValid &&
-                        <span className="validation-error">{targetCurrency.error}</span>}
-                    </div>
+                    <DropdownList
+                      className="target-currency"
+                      name={targetCurrency.name}
+                      label="Target Currency*"
+                      htmlFor="target-currency"
+                      options={['USD', 'CHF']}
+                      value={targetCurrency.value}
+                      isValid={targetCurrency.isValid}
+                      error={targetCurrency.error}
+                      onChange={targetCurrency.onChange}
+                    />
                   </div>
                 </div>
               </div>
@@ -175,11 +151,6 @@ class EditModal extends React.Component<EditModalProps> {
   private handleDateChange(value: moment.Moment, onChange: (value?: moment.Moment) => void) {
     value = value || undefined;
     onChange(value);
-  }
-
-  @action
-  private toggleDropDown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
   }
 }
 

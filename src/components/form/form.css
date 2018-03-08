@@ -1,0 +1,10 @@
+.md-form .form-label {
+  position: absolute;
+  top: -0.6rem;
+  left: 0;
+  font-size: .8rem;
+}
+
+.validation-error {
+  color: red;
+}
