@@ -5,7 +5,7 @@ import ExchangeRate, { ExchangeRateEdit } from '../models/exchange-rate.model';
 
 export default class ExchangeRatesStore {
   @observable isLoading = false;
-  @observable exchangeRatesRegistry = observable.map<ExchangeRateView>();
+  @observable private exchangeRatesRegistry = observable.map<ExchangeRateView>();
 
   private exchangeRateAgent: ExchangeRateAgent;
 
