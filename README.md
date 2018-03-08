@@ -24,7 +24,7 @@ Project aims to experiment with `Bootsrtap 4` as a base for layout components. I
 
 ## Tests
 
-* `npm run test` or `yarn run test`
+* `npm run test a` or `yarn run test a`
 
 For now only one example of test is written using `jest` / `enzyme` / `sinon` in [TextField.test.tsx](src/components/form/TextField/TextField.test.tsx).
 
