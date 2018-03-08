@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { inject, observer } from 'mobx-react';
-import { observable, action } from 'mobx';
-import * as moment from 'moment';
+import { observable, action, computed } from 'mobx';
 import ExchangeRatesStore from '../../stores/exchange-rates.store';
+import { ExchangeRateEdit } from '../../models/exchange-rate.model';
 import ExchangeRateView from '../../models/view-models/exchange-rate.view';
+import ExchangeRateSortField from '../../constants/exchange-rate-sort-field';
 import ExchangeRateList from './components/ExchangeRateList';
 import EditModal from './components/EditModal';
 import './ExchangeRates.css';
@@ -12,22 +13,39 @@ interface HomeProps {
   exchangeRatesStore: ExchangeRatesStore;
 }
 
-export interface ExchangeRateEdit {
- date: moment.Moment;
- rate: number;
- targetCurrency: string;
-}
-
 @inject('exchangeRatesStore')
 @observer
 export default class Home extends React.Component<HomeProps> {
   @observable private isModalOpen = false;
-  @observable private editedExchangeRate?: ExchangeRateView = undefined;
+  @observable private sortField = ExchangeRateSortField.Date;
+  @observable private isSortAscending = true;
+  @observable private exchangeRateToEdit?: ExchangeRateView = undefined;
+
+  @computed
+  get editedExchangeRate(): ExchangeRateEdit | undefined {
+    if (this.exchangeRateToEdit) {
+      return {
+        id: this.exchangeRateToEdit!.id,
+        rate: this.exchangeRateToEdit!.rate,
+        date: this.exchangeRateToEdit!.date,
+        targetCurrency: this.exchangeRateToEdit!.targetCurrency
+      };
+    }
+    return undefined;
+  }
+
+  @computed
+  get sortedExchangRates() {
+    return this.props.exchangeRatesStore.exchangeRates
+      .sort(this.sortBy(this.sortField));
+  }
 
   constructor(props: HomeProps) {
     super(props);
     this.closeEditModal = this.closeEditModal.bind(this);
     this.openEditModal = this.openEditModal.bind(this);
+    this.updateExchangeRate = this.updateExchangeRate.bind(this);
+    this.setSorting = this.setSorting.bind(this);
   }
 
   componentDidMount() {
@@ -35,19 +53,19 @@ export default class Home extends React.Component<HomeProps> {
   }
 
   render() {
-    const { exchangeRates, isLoading, setSorting, isSortAscending, sortField } = this.props.exchangeRatesStore;
+    const { isLoading } = this.props.exchangeRatesStore;
     return (
       <div className="exchange-rates">
         <ExchangeRateList
-          exchangeRates={exchangeRates}
+          exchangeRates={this.sortedExchangRates}
           isLoading={isLoading}
-          isSortAscending={isSortAscending}
-          sortField={sortField}
-          onSort={setSorting.bind(this.props.exchangeRatesStore)}
+          isSortAscending={this.isSortAscending}
+          sortField={this.sortField}
+          onSort={this.setSorting}
           onEdit={this.openEditModal}
         />
         <EditModal
-          exchangeRate={this.editedExchangeRate!}
+          exchangeRate={this.editedExchangeRate}
           isOpen={this.isModalOpen}
           onClose={this.closeEditModal}
           onSubmit={this.updateExchangeRate}
@@ -57,19 +75,48 @@ export default class Home extends React.Component<HomeProps> {
   }
 
   @action
-  closeEditModal() {
+  protected closeEditModal() {
     this.isModalOpen = false;
-    this.editedExchangeRate = undefined;
+    this.exchangeRateToEdit = undefined;
   }
 
   @action
-  openEditModal(exchangeRate: ExchangeRateView) {
+  protected openEditModal(exchangeRate: ExchangeRateView) {
     this.isModalOpen = true;
-    this.editedExchangeRate = exchangeRate;
+    this.exchangeRateToEdit = exchangeRate;
   }
 
   @action
-  updateExchangeRate(edited: ExchangeRateEdit) {
-    alert(JSON.stringify(edited));
+  protected updateExchangeRate(edited: ExchangeRateEdit) {
+    this.closeEditModal();
+    this.props.exchangeRatesStore.update(edited);
+  }
+
+  @action
+  private setSorting(sortField: ExchangeRateSortField) {
+    this.isSortAscending = sortField === this.sortField
+      ? !this.isSortAscending
+      : true;
+    this.sortField = sortField;
+  }
+
+  private sortBy = (sortField: ExchangeRateSortField) => (a: ExchangeRateView, b: ExchangeRateView) => {
+    let firstElement, secondElement;
+    if (this.isSortAscending) {
+      firstElement = a;
+      secondElement = b;
+    } else {
+      firstElement = b;
+      secondElement = a;
+    }
+    switch (sortField) {
+      case ExchangeRateSortField.TargetCurrency:
+        return firstElement.targetCurrency.localeCompare(secondElement.targetCurrency);
+      case ExchangeRateSortField.Rate:
+        return firstElement.rate - secondElement.rate;
+      case ExchangeRateSortField.Date:
+      default:
+        return firstElement.date.diff(secondElement.date);
+    }
   }
 }

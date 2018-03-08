@@ -1,12 +1,10 @@
 import { observable, action, computed, runInAction } from 'mobx';
 import ExchangeRateAgent from '../agents/exchange-rate.agent';
-import ExchangeRateSortField from '../constants/exchange-rate-sort-field';
 import ExchangeRateView from '../models/view-models/exchange-rate.view';
+import ExchangeRate, { ExchangeRateEdit } from '../models/exchange-rate.model';
 
 export default class ExchangeRatesStore {
   @observable isLoading = false;
-  @observable sortField = ExchangeRateSortField.Date;
-  @observable isSortAscending = true;
   @observable exchangeRatesRegistry = observable.map<ExchangeRateView>();
 
   private exchangeRateAgent: ExchangeRateAgent;
@@ -17,9 +15,7 @@ export default class ExchangeRatesStore {
 
   @computed
   get exchangeRates() {
-    return this.exchangeRatesRegistry
-      .values()
-      .sort(this.sortBy(this.sortField));
+    return this.exchangeRatesRegistry.values();
   }
 
   @action
@@ -38,30 +34,29 @@ export default class ExchangeRatesStore {
   }
 
   @action
-  setSorting(sortField: ExchangeRateSortField) {
-    this.isSortAscending = sortField === this.sortField
-      ? !this.isSortAscending
-      : true;
-    this.sortField = sortField;
+  async update(exchangeRate: ExchangeRateEdit) {
+    this.isLoading = true;
+    const targetExchangeRate = {
+      Id: exchangeRate.id,
+      Rate: exchangeRate.rate,
+      Date: exchangeRate.date.toISOString(),
+      CurrencyPair: `EUR${exchangeRate.targetCurrency}`
+    };
+
+    // Target API does not support updating. There for for presentational purposes we're mocking success.
+    try {
+      await this.exchangeRateAgent.update(targetExchangeRate);
+    } catch {
+      this.updateRegistry(targetExchangeRate);
+    }
+
+    runInAction(() => {
+      this.isLoading = false;
+    });
   }
 
-  sortBy = (sortField: ExchangeRateSortField) => (a: ExchangeRateView, b: ExchangeRateView) => {
-    let firstElement, secondElement;
-    if (this.isSortAscending) {
-      firstElement = a;
-      secondElement = b;
-    } else {
-      firstElement = b;
-      secondElement = a;
-    }
-    switch (sortField) {
-      case ExchangeRateSortField.TargetCurrency:
-        return firstElement.targetCurrency.localeCompare(secondElement.targetCurrency);
-      case ExchangeRateSortField.Rate:
-        return firstElement.rate - secondElement.rate;
-      case ExchangeRateSortField.Date:
-      default:
-        return firstElement.date.diff(secondElement.date);
-    }
+  @action
+  private updateRegistry(exchangeRate: ExchangeRate) {
+    this.exchangeRatesRegistry.set(exchangeRate.Id, new ExchangeRateView(exchangeRate));
   }
 }

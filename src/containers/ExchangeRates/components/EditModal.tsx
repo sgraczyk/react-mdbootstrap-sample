@@ -9,12 +9,11 @@ import { observer } from 'mobx-react';
 import MobxReactForm from 'mobx-react-form';
 import * as validatorjs from 'validatorjs';
 import * as moment from 'moment';
-import { ExchangeRateEdit } from '../ExchangeRates';
-import ExchangeRateView from '../../../models/view-models/exchange-rate.view';
+import { ExchangeRateEdit } from '../../../models/exchange-rate.model';
 import 'react-datepicker/dist/react-datepicker.css';
 
 interface EditModalProps {
-  exchangeRate: ExchangeRateView;
+  exchangeRate?: ExchangeRateEdit;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (exchangeRate: ExchangeRateEdit) => void;
@@ -34,7 +33,10 @@ class EditModal extends React.Component<EditModalProps> {
   componentWillReceiveProps(props: EditModalProps) {
     if (props.exchangeRate) {
       runInAction(() => {
-        this.setupValidations(props.exchangeRate);
+        this.setupForm({
+          targetCurrency: props.exchangeRate!.targetCurrency,
+          ...props.exchangeRate!
+        });
       });
     }
   }
@@ -62,7 +64,7 @@ class EditModal extends React.Component<EditModalProps> {
                         className="form-control"
                         name={date.name}
                         selected={date.value}
-                        onChange={(value) => this.handleDateChangedate(value!, date.onChange)}
+                        onChange={(value) => this.handleDateChange(value!, date.onChange)}
                       />
                       <label className="form-label" htmlFor="date">Date*</label>
                       {!date.isValid &&
@@ -129,7 +131,7 @@ class EditModal extends React.Component<EditModalProps> {
   }
 
   @action
-  private setupValidations({ id, date, rate, targetCurrency }: ExchangeRateView) {
+  private setupForm({ id, date, rate, targetCurrency }: ExchangeRateEdit) {
     const onSubmit = this.props.onSubmit;
     const plugins = { dvr: validatorjs };
     const fields = [{
@@ -162,11 +164,7 @@ class EditModal extends React.Component<EditModalProps> {
     const hooks = {
       onSuccess(form: any) {
         const values = form.values();
-        onSubmit({
-          date: (values.date as moment.Moment),
-          rate: (values.rate as number),
-          targetCurrency: (values.targetCurrency as string)
-        });
+        onSubmit({ ...values });
       }
     };
 
@@ -174,7 +172,7 @@ class EditModal extends React.Component<EditModalProps> {
   }
 
   @action
-  private handleDateChangedate(value: moment.Moment, onChange: (value?: moment.Moment) => void) {
+  private handleDateChange(value: moment.Moment, onChange: (value?: moment.Moment) => void) {
     value = value || undefined;
     onChange(value);
   }
